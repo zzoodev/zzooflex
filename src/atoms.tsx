@@ -1,13 +1,17 @@
 import { atom } from "recoil";
 
-interface ItodosAtom {
-  [key: string]: string[];
+export interface Itodo {
+  text: string;
+  id: number;
+}
+export interface ItodosAtom {
+  [key: string]: Itodo[];
 }
 export const todosAtom = atom<ItodosAtom>({
   key: "todos",
   default: {
-    to_do: ["a", "b", "c"],
-    doing: ["d", "e"],
-    done: ["f", "g"],
+    to_do: [],
+    doing: [],
+    done: [],
   },
 });

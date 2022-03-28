@@ -1,5 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 import DragAndDrap from "./components/DragAndDrap";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { todosAtom } from "./atoms";
 
 const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
@@ -54,6 +56,11 @@ a{
 `;
 
 function App() {
+  const getData = localStorage.getItem("todoData");
+  const original = JSON.parse(getData as string);
+  const base = useSetRecoilState(todosAtom);
+  base(original);
+
   return (
     <>
       <GlobalStyle />
