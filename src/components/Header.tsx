@@ -3,6 +3,8 @@ import { motion, useAnimation, useViewportScroll } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useMatch } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -46,7 +48,7 @@ const Circle = styled(motion.span)`
   background-color: red;
   border-radius: 50%;
 `;
-const Search = styled.div`
+const Search = styled.form`
   display: flex;
   align-items: center;
   position: relative;
@@ -83,17 +85,21 @@ const navVariants = {
   },
 };
 
+interface IForm {
+  keyword: string;
+}
 function Header() {
   const isInHome = useMatch("/");
   const isInTv = useMatch("tv");
   const [isOpenSearch, setIsOpenSearch] = useState(false);
   const { scrollY } = useViewportScroll();
   const navAnimation = useAnimation();
+  const { register, handleSubmit } = useForm<IForm>();
+  const navigate = useNavigate();
 
   const toggleSearch = () => {
     setIsOpenSearch((current) => !current);
   };
-
   useEffect(() => {
     scrollY.onChange(() => {
       if (scrollY.get() > 80) {
@@ -102,10 +108,12 @@ function Header() {
         navAnimation.start("transparent");
       }
     });
-  }, [scrollY]);
-
+  }, [scrollY, navAnimation]);
+  const onSubmit = (data: IForm) => {
+    navigate(`/search?keyword=${data.keyword}`);
+  };
   return (
-    <Nav variants={navVariants} animate={navAnimation}>
+    <Nav variants={navVariants} initial="transparent" animate={navAnimation}>
       <Column>
         <Logo viewBox="0 0 1024 276.742">
           <motion.path
@@ -130,8 +138,10 @@ function Header() {
         </Items>
       </Column>
       <Column>
-        <Search>
+        <Search onSubmit={handleSubmit(onSubmit)}>
           <Input
+            {...register("keyword", { required: true, minLength: 2 })}
+            initial={{ scaleX: 0 }}
             animate={{ scaleX: isOpenSearch ? 1 : 0 }}
             transition={{ type: "linear" }}
             placeholder="Search for movie or TV shows..."

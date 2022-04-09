@@ -5,6 +5,7 @@ import { ThemeProvider } from "styled-components";
 import { theme } from "./theme";
 import { RecoilRoot } from "recoil";
 import { createGlobalStyle } from "styled-components";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
@@ -35,7 +36,10 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	background-color: #111;
+	color: white;
 	font-family: 'Roboto', sans-serif;
+	overflow-x:hidden
 }
 ol, ul {
 	list-style: none;
@@ -59,13 +63,17 @@ a{
 *{ box-sizing:border-box }
 `;
 
+const client = new QueryClient();
+
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <App />
-      </ThemeProvider>
+      <QueryClientProvider client={client}>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <App />
+        </ThemeProvider>
+      </QueryClientProvider>
     </RecoilRoot>
   </React.StrictMode>,
   document.getElementById("root")
