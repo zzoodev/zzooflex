@@ -1,4 +1,4 @@
-import { getNowPlayMovies, IGetNowPlayMovies, IMovie } from "../api";
+import { getNowPlayMovies, IGetNowPlayMovies } from "../api";
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { makeImagePath } from "../util";
@@ -30,6 +30,7 @@ const Banner = styled.div<{ bgimg: string }>`
 `;
 const Title = styled.h2`
   font-size: 48px;
+  margin-top: 100px;
   margin-bottom: 10px;
 `;
 const Slider = styled.div`
@@ -182,6 +183,7 @@ function Home() {
             <Title>{data?.results[0].title}</Title>
             <p>{data?.results[0].overview}</p>
           </Banner>
+
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleSliding}>
               <Row

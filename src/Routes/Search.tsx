@@ -4,8 +4,14 @@ import { useQuery } from "react-query";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { makeImagePath } from "../util";
-import { useEffect, useState } from "react";
 
+const LoadingPage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 38px;
+`;
 const Wrap = styled.div`
   width: 100%;
   height: max-content;
@@ -33,8 +39,11 @@ const Contents = styled(motion.section)`
 const Content = styled(motion.div)<{ bg: string }>`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   height: 130px;
-  background-image: url(${(props) => props.bg});
+  background: url(${(props) => props.bg});
+  background-color: gray;
   background-position: center center;
   background-size: cover;
   position: relative;
@@ -76,14 +85,15 @@ function Search() {
   const location = useLocation();
 
   let keyword = new URLSearchParams(location.search).get("keyword");
-  let { data, isLoading } = useQuery<ISearchedMovies>("movies", () =>
+
+  let { data, isLoading } = useQuery<ISearchedMovies>(["movies", keyword], () =>
     getSearchedMovies(keyword as string)
   );
 
   return (
     <Wrap>
       {isLoading ? (
-        <h2>Loading..</h2>
+        <LoadingPage></LoadingPage>
       ) : (
         <>
           <Intro>
@@ -94,10 +104,11 @@ function Search() {
             {data?.results.map((content) => (
               <Content
                 key={content.id}
-                bg={makeImagePath(content.backdrop_path, "w300")}
+                bg={makeImagePath(content.backdrop_path, "w300") || ""}
                 whileHover="hover"
                 variants={contentVariant}
               >
+                <h3>{content.backdrop_path ? null : content.original_title}</h3>
                 <Info variants={infoVariants}>
                   {content.original_title
                     ? content.original_title
