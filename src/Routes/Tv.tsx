@@ -83,7 +83,7 @@ function Tv() {
       queryFn: getPopularTv,
     },
     {
-      queryKey: ["te", "topRatedTv"],
+      queryKey: ["tv", "topRatedTv"],
       queryFn: getTopRatedTv,
     },
   ]);
