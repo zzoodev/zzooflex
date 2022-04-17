@@ -1,6 +1,7 @@
 const API_KEY = "e51171931820c845ce6637f3e578d769";
 const BASE_URL = "https://api.themoviedb.org/3";
 
+// Movies interface
 export interface IMovie {
   backdrop_path: string;
   poster_path: string;
@@ -33,6 +34,32 @@ export interface ISearchedMovie {
 export interface ISearchedMovies {
   results: ISearchedMovie[];
 }
+// Movies interface
+
+// Tv interface
+export interface ILatestTv {
+  id: number;
+  backdrop_path: string;
+  poster_path: string;
+  name: string;
+  original_name: string;
+  overview: string;
+  vote_average: number;
+}
+export interface IAirTodayTvs {
+  page: number;
+  results: IAirTodayTv[];
+}
+export interface IAirTodayTv {
+  id: number;
+  name: string;
+  original_name: string;
+  overview: string;
+  backdrop_path: string;
+  poster_path: string;
+  first_air_date: string;
+  vote_average: number;
+}
 export interface IpopulaTv {
   backdrop_path: string;
   first_air_date: string;
@@ -59,7 +86,9 @@ export interface ITopRatedTvs {
   page: number;
   results: ITopRatedTv[];
 }
+// Tv interface
 
+// fetch Movies
 export function getNowPlayMovies() {
   return fetch(`${BASE_URL}/movie/now_playing?api_key=${API_KEY}`).then(
     (response) => response.json()
@@ -72,13 +101,27 @@ export async function getSearchedMovies(keyword: string) {
     )
   ).json();
 }
+// fetch Movies
+
+// fetch Tv
+export async function getLatestTv() {
+  return await fetch(`${BASE_URL}/tv/latest?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
+}
+export async function getAiringTodayTv() {
+  return await fetch(
+    `${BASE_URL}/tv/airing_today?api_key=${API_KEY}&page=1`
+  ).then((response) => response.json());
+}
 export async function getPopularTv() {
-  return fetch(`${BASE_URL}/tv/popular?api_key=${API_KEY}&page=1`).then(
+  return await fetch(`${BASE_URL}/tv/popular?api_key=${API_KEY}&page=1`).then(
     (response) => response.json()
   );
 }
 export async function getTopRatedTv() {
-  return fetch(`${BASE_URL}/tv/top_rated?api_key=${API_KEY}&page=1`).then(
+  return await fetch(`${BASE_URL}/tv/top_rated?api_key=${API_KEY}&page=1`).then(
     (reponse) => reponse.json()
   );
 }
+// fetch Tv
