@@ -124,4 +124,9 @@ export async function getTopRatedTv() {
     (reponse) => reponse.json()
   );
 }
+export async function getTv(tvId: any) {
+  return await fetch(`${BASE_URL}/tv/${tvId}?api_key=${API_KEY}`).then(
+    (reponse) => reponse.json()
+  );
+}
 // fetch Tv
