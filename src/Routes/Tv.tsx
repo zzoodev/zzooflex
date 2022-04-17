@@ -11,7 +11,7 @@ import { ILatestTv, IAirTodayTvs, IPopulaTvs, ITopRatedTvs } from "../api";
 import { makeImagePath } from "../util";
 import { motion, AnimatePresence, useViewportScroll } from "framer-motion";
 import React, { useState } from "react";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate, useLocation } from "react-router-dom";
 import { url } from "inspector";
 
 const Wrapper = styled.div`
@@ -45,7 +45,14 @@ const Banner = styled.section<{ bg: string | null }>`
     width: 50%;
   }
 `;
-const SliderWrap = styled.div``;
+const SliderWrap = styled.div`
+  h5 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 5px 10px;
+    color: tomato;
+  }
+`;
 const Slider = styled(motion.article)`
   width: 100%;
   height: 200px;
@@ -123,6 +130,17 @@ const InfoPageInfo = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${(props) => props.theme.black.lighter};
+  padding: 20px;
+  box-sizing: border-box;
+  h3 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  strong {
+    font-size: 18px;
+    color: gold;
+    margin: 10px 0px;
+  }
 `;
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -158,7 +176,11 @@ function Tv() {
   const [airingIndex, setAiringIndex] = useState(0);
   const [populaIndex, setPopulaIndex] = useState(0);
   const [topRatedIndex, setTopRatedIndex] = useState(0);
-  const indexArray = [airingIndex, populaIndex, topRatedIndex];
+  let indexArray = [
+    { index: airingIndex, indexName: "airingIndex" },
+    { index: populaIndex, indexName: "populaIndex" },
+    { index: topRatedIndex, indexName: "topRatedIndex" },
+  ];
   const offset = 5;
   const [isSliding, setIsSliding] = useState(false);
   const [isBack, setIsBack] = useState(false);
@@ -232,22 +254,27 @@ function Tv() {
     }
   };
 
+  interface ITvData {
+    id: number;
+    name: string;
+    vote_average: number;
+    overview: string;
+  }
   const infoPageMatch = useMatch(`/tv/:tvId`);
-  const getTvData = async (id: any) => {
+  const [tvData, setTvData] = useState<ITvData>();
+  const { state }: any = useLocation();
+
+  if (state) {
+  }
+
+  const onBoxClick = async (id: any) => {
     const data = await (
       await fetch(
         `https://api.themoviedb.org/3/tv/${id}?api_key=e51171931820c845ce6637f3e578d769`
       )
     ).json();
+    setTvData(data);
   };
-  // const allTv: any = {
-  //   ...airingData?.results,
-  //   ...populaData?.results,
-  //   ...topRatedData?.results,
-  // };
-  // const clickedTv: any =
-  //   infoPageMatch?.params.tvId &&
-  //   allTv?.results.find((tv: any) => tv.id === +infoPageMatch.params.tvId!);
 
   const RowVariants = {
     initial: (isBack: boolean) => ({
@@ -280,13 +307,13 @@ function Tv() {
           </Banner>
 
           {sliderData.map((data, sliderIndex) => (
-            <SliderWrap key={sliderIndex}>
-              <h3>{sliderName[sliderIndex]}</h3>
+            <SliderWrap key={sliderIndex + ""}>
+              <h5>{sliderName[sliderIndex]}</h5>
               <Slider id={sliderIndex + ""}>
                 <AnimatePresence initial={false} onExitComplete={toggleSliding}>
                   <Row
                     id={sliderIndex + ""}
-                    key={indexArray[sliderIndex] + ""}
+                    key={indexArray[sliderIndex].index}
                     variants={RowVariants}
                     initial="initial"
                     animate="animate"
@@ -296,15 +323,23 @@ function Tv() {
                   >
                     {data?.results
                       .slice(
-                        indexArray[sliderIndex] * offset,
-                        indexArray[sliderIndex] * offset + offset
+                        indexArray[sliderIndex].index * offset,
+                        indexArray[sliderIndex].index * offset + offset
                       )
                       .map((item) => (
                         <Box
                           id={item.id + ""}
                           layoutId={item.id + ""}
                           bgimg={makeImagePath(item.backdrop_path, "w500")}
-                          onClick={() => getTvData(item.id)}
+                          onClick={() => {
+                            onBoxClick(item.id);
+                            navigate(`/tv/${item.id + ""}`, {
+                              state: {
+                                tvId: item.id,
+                                bgpath: item.backdrop_path,
+                              },
+                            });
+                          }}
                         ></Box>
                       ))}
                   </Row>
@@ -314,16 +349,23 @@ function Tv() {
               </Slider>
             </SliderWrap> // slider
           ))}
-
-          {/* <AnimatePresence>
+          <AnimatePresence>
             {infoPageMatch ? (
               <>
                 <InfoPage
                   layoutId={infoPageMatch.params.tvId + ""}
-                  style={{ top: scrollY.get() + 200 }}
+                  style={{ top: scrollY.get() + 100, zIndex: 3 }}
                 >
-                  <InfoPageBg style={{}} />
-                  <InfoPageInfo></InfoPageInfo>
+                  <InfoPageBg
+                    style={{
+                      backgroundImage: `url(${makeImagePath(state.bgpath)})`,
+                    }}
+                  ></InfoPageBg>
+                  <InfoPageInfo>
+                    <h3>Title: {tvData?.name}</h3>
+                    <strong>Rating: {tvData?.vote_average}</strong>
+                    <p>Overview: {tvData?.overview}</p>
+                  </InfoPageInfo>
                 </InfoPage>
                 <Overlay
                   onClick={() => navigate(`/tv`)}
@@ -332,7 +374,7 @@ function Tv() {
                 ></Overlay>
               </>
             ) : null}
-          </AnimatePresence> */}
+          </AnimatePresence>
         </> // tv page
       )}
     </Wrapper>
