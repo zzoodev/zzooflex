@@ -204,13 +204,6 @@ function Home() {
   const [upcomingIndex, setUpcomingIndex] = useState(0);
   const [isUpcomingBack, setIsUpcomingBack] = useState(false);
 
-  // const allMovies: any = [
-  //   ...nowData?.results!,
-  //   ...topData?.results!,
-  //   ...upcomingData?.results!,
-  // ];
-  // console.log(allMovies);
-
   const nowNext = () => {
     if (nowData) {
       if (isSliding) return;
@@ -321,9 +314,19 @@ function Home() {
                   .map((movie) => (
                     <Box
                       layoutId={movie.id + ""}
-                      onClick={() => navigate(`../movies/${movie.id}`)}
+                      onClick={() =>
+                        navigate(`../movies/${movie.id}`, {
+                          state: {
+                            id: movie.id,
+                            bgimg: movie.backdrop_path,
+                            overview: movie.overview,
+                            title: movie.title,
+                          },
+                        })
+                      }
                       variants={boxVariants}
                       initial="nomal"
+                      id={movie.id + ""}
                       whileHover="hover"
                       transition={{ duration: 0.5, type: "tween" }}
                       key={movie.id}
@@ -357,8 +360,18 @@ function Home() {
                   .map((movie) => (
                     <Box
                       layoutId={movie.id + ""}
-                      onClick={() => navigate(`../movies/${movie.id}`)}
+                      onClick={() =>
+                        navigate(`../movies/${movie.id}`, {
+                          state: {
+                            id: movie.id,
+                            bgimg: movie.backdrop_path,
+                            overview: movie.overview,
+                            title: movie.title,
+                          },
+                        })
+                      }
                       variants={boxVariants}
+                      id={movie.id + ""}
                       initial="nomal"
                       whileHover="hover"
                       transition={{ duration: 0.5, type: "tween" }}
@@ -396,7 +409,17 @@ function Home() {
                   .map((movie) => (
                     <Box
                       layoutId={movie.id + ""}
-                      onClick={() => navigate(`../movies/${movie.id}`)}
+                      id={movie.id + ""}
+                      onClick={() =>
+                        navigate(`../movies/${movie.id}`, {
+                          state: {
+                            id: movie.id,
+                            bgimg: movie.backdrop_path,
+                            overview: movie.overview,
+                            title: movie.title,
+                          },
+                        })
+                      }
                       variants={boxVariants}
                       initial="nomal"
                       whileHover="hover"
