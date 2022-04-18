@@ -110,7 +110,7 @@ function Header() {
     });
   }, [scrollY, navAnimation]);
   const onSubmit = (data: IForm) => {
-    navigate(`/search?keyword=${data.keyword}`);
+    navigate(`${process.env.PUBLIC_URL}/search?keyword=${data.keyword}`);
   };
   return (
     <Nav variants={navVariants} initial="transparent" animate={navAnimation}>
@@ -128,11 +128,11 @@ function Header() {
         </Logo>
         <Items>
           <Item>
-            <Link to="/">Home</Link>
+            <Link to={`${process.env.PUBLIC_URL}/`}>Home</Link>
             {isInHome ? <Circle layoutId="circle" /> : null}
           </Item>
           <Item>
-            <Link to="/tv">TV Shows</Link>
+            <Link to={`${process.env.PUBLIC_URL}/tv`}>TV Shows</Link>
             {isInTv ? <Circle layoutId="circle" /> : null}
           </Item>
         </Items>

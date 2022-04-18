@@ -261,7 +261,7 @@ function Tv() {
     vote_average: number;
     overview: string;
   }
-  const infoPageMatch = useMatch(`/tv/:tvId`);
+  const infoPageMatch = useMatch(`${process.env.PUBLIC_URL}/tv/:tvId`);
   const [tvData, setTvData] = useState<ITvData>();
   const { state }: any = useLocation();
 
@@ -331,12 +331,15 @@ function Tv() {
                           bgimg={makeImagePath(item.backdrop_path, "w500")}
                           onClick={() => {
                             onBoxClick(item.id);
-                            navigate(`/tv/${item.id + ""}`, {
-                              state: {
-                                tvId: item.id,
-                                bgpath: item.backdrop_path,
-                              },
-                            });
+                            navigate(
+                              `${process.env.PUBLIC_URL}/tv/${item.id + ""}`,
+                              {
+                                state: {
+                                  tvId: item.id,
+                                  bgpath: item.backdrop_path,
+                                },
+                              }
+                            );
                           }}
                           whileHover={{ scale: 1.2 }}
                         ></Box>
@@ -367,7 +370,7 @@ function Tv() {
                   </InfoPageInfo>
                 </InfoPage>
                 <Overlay
-                  onClick={() => navigate(`/tv`)}
+                  onClick={() => navigate(`${process.env.PUBLIC_URL}/tv`)}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 ></Overlay>

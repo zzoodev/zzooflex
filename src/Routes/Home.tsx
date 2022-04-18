@@ -289,10 +289,9 @@ function Home() {
   const [isSliding, setIsSliding] = useState(false);
   const offset = 6;
   const navigate = useNavigate();
-  const infoPageMatch = useMatch("/movies/:movieId");
+  const infoPageMatch = useMatch(`${process.env.PUBLIC_URL}/movies/:movieId`);
   const { scrollY } = useViewportScroll();
   const { state }: any = useLocation();
-  console.log(state);
 
   const clickedMovie: any =
     infoPageMatch?.params.movieId &&
@@ -336,14 +335,17 @@ function Home() {
                     <Box
                       layoutId={movie.id + ""}
                       onClick={() =>
-                        navigate(`../movies/${movie.id}`, {
-                          state: {
-                            id: movie.id,
-                            bgimg: movie.backdrop_path,
-                            overview: movie.overview,
-                            title: movie.title,
-                          },
-                        })
+                        navigate(
+                          `${process.env.PUBLIC_URL}/movies/${movie.id}`,
+                          {
+                            state: {
+                              id: movie.id,
+                              bgimg: movie.backdrop_path,
+                              overview: movie.overview,
+                              title: movie.title,
+                            },
+                          }
+                        )
                       }
                       variants={boxVariants}
                       initial="nomal"
@@ -382,15 +384,18 @@ function Home() {
                     <Box
                       layoutId={movie.id + ""}
                       onClick={() =>
-                        navigate(`../movies/${movie.id}`, {
-                          state: {
-                            id: movie.id,
-                            bgimg: movie.backdrop_path,
-                            overview: movie.overview,
-                            title: movie.title,
-                            star: movie.vote_average,
-                          },
-                        })
+                        navigate(
+                          `${process.env.PUBLIC_URL}/movies/${movie.id}`,
+                          {
+                            state: {
+                              id: movie.id,
+                              bgimg: movie.backdrop_path,
+                              overview: movie.overview,
+                              title: movie.title,
+                              star: movie.vote_average,
+                            },
+                          }
+                        )
                       }
                       variants={boxVariants}
                       id={movie.id + ""}
@@ -433,15 +438,18 @@ function Home() {
                       layoutId={movie.id + ""}
                       id={movie.id + ""}
                       onClick={() =>
-                        navigate(`../movies/${movie.id}`, {
-                          state: {
-                            id: movie.id,
-                            bgimg: movie.backdrop_path,
-                            overview: movie.overview,
-                            title: movie.title,
-                            star: movie.vote_average,
-                          },
-                        })
+                        navigate(
+                          `${process.env.PUBLIC_URL}/movies/${movie.id}`,
+                          {
+                            state: {
+                              id: movie.id,
+                              bgimg: movie.backdrop_path,
+                              overview: movie.overview,
+                              title: movie.title,
+                              star: movie.vote_average,
+                            },
+                          }
+                        )
                       }
                       variants={boxVariants}
                       initial="nomal"
@@ -478,7 +486,7 @@ function Home() {
                   </InfoPageInfo>
                 </InfoPage>
                 <Overlay
-                  onClick={() => navigate(`/`)}
+                  onClick={() => navigate(`${process.env.PUBLIC_URL}/`)}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 ></Overlay>
