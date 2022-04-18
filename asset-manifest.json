@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/zzooflex/static/js/main.303219cc.js",
+    "main.js": "/zzooflex/static/js/main.72f1c307.js",
     "index.html": "/zzooflex/index.html",
-    "main.303219cc.js.map": "/zzooflex/static/js/main.303219cc.js.map"
+    "main.72f1c307.js.map": "/zzooflex/static/js/main.72f1c307.js.map"
   },
   "entrypoints": [
-    "static/js/main.303219cc.js"
+    "static/js/main.72f1c307.js"
   ]
 }
