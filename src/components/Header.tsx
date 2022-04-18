@@ -89,8 +89,8 @@ interface IForm {
   keyword: string;
 }
 function Header() {
-  const isInHome = useMatch("/");
-  const isInTv = useMatch("tv");
+  const isInHome = useMatch(`${process.env.PUBLIC_URL}/`);
+  const isInTv = useMatch(`${process.env.PUBLIC_URL}/tv`);
   const [isOpenSearch, setIsOpenSearch] = useState(false);
   const { scrollY } = useViewportScroll();
   const navAnimation = useAnimation();
