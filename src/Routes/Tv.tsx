@@ -91,6 +91,7 @@ const Box = styled(motion.div)<{ bgimg: string }>`
   background: url(${(props) => props.bgimg});
   background-size: cover;
   background-position: center;
+  cursor: pointer;
 `;
 
 const Info = styled(motion.div)`
@@ -337,6 +338,7 @@ function Tv() {
                               },
                             });
                           }}
+                          whileHover={{ scale: 1.2 }}
                         ></Box>
                       ))}
                   </Row>

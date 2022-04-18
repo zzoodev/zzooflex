@@ -42,6 +42,28 @@ export interface ILatestMovie {
   poster_path: string;
   title: string;
 }
+export interface ITopRatedMovies {
+  results: ITopRatedMovie[];
+}
+export interface ITopRatedMovie {
+  backdrop_path: string;
+  poster_path: string;
+  id: number;
+  overview: string;
+  title: string;
+  vote_average: number;
+}
+export interface IUpcomingMovies {
+  results: IUpcomingMovie[];
+}
+export interface IUpcomingMovie {
+  backdrop_path: string;
+  poster_path: string;
+  id: number;
+  overview: string;
+  title: string;
+  vote_average: number;
+}
 // Movies interface
 
 // Tv interface
@@ -114,6 +136,17 @@ export async function getLatestMovie() {
     await fetch(`${BASE_URL}/movie/latest?api_key=${API_KEY}`)
   ).json();
 }
+export async function getTopRatedMovies() {
+  return await (
+    await fetch(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}`)
+  ).json();
+}
+export async function getUpcomingMovies() {
+  return await (
+    await fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}`)
+  ).json();
+}
+
 // fetch Movies
 
 // fetch Tv
