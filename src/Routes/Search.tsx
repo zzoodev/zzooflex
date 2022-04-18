@@ -134,6 +134,7 @@ function Search() {
     getSearchedMovies(keyword as string)
   );
   const offset = 5;
+
   const [movieIndex, setMovieIndex] = useState(0);
   const [movieIsBack, setMovieIsBack] = useState(false);
 
@@ -155,6 +156,22 @@ function Search() {
     ).length;
     const maxMovieIndex = Math.floor(totalMovie! / offset) - 1;
     setMovieIndex((index) => (index === maxMovieIndex ? 0 : index + 1));
+  };
+  const onPrev = () => {
+    setTvIsBack(true);
+    const totalTv = data?.results.filter(
+      (item) => item.media_type === "tv"
+    ).length;
+    const maxTvIndex = Math.floor(totalTv! / offset) - 1;
+    setTvIndex((index) => (index === 0 ? maxTvIndex : index - 1));
+  };
+  const onNext = () => {
+    setTvIsBack(false);
+    const totalTv = data?.results.filter(
+      (item) => item.media_type === "tv"
+    ).length;
+    const maxTvIndex = Math.floor(totalTv! / offset) - 1;
+    setTvIndex((index) => (index === maxTvIndex ? 0 : index + 1));
   };
 
   const RowVariants = {
@@ -201,7 +218,32 @@ function Search() {
               </Row>
             </AnimatePresence>
           </MovieSlider>
-          <TvSlider></TvSlider>
+          <TvSlider>
+            <h2>Searched Tvs</h2>
+            <PrevBtn onClick={onPrev}>Prev</PrevBtn>
+            <NextBtn onClick={onNext}>Next</NextBtn>
+            <AnimatePresence initial={false}>
+              <Row
+                key={tvIndex}
+                variants={RowVariants}
+                custom={tvIsBack}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ type: "just" }}
+              >
+                {data?.results
+                  .filter((item) => item.media_type === "tv")
+                  ?.slice(tvIndex * offset, tvIndex * offset + offset)
+                  .map((tv) => (
+                    <Box
+                      key={tv.id}
+                      bgmovie={makeImagePath(tv.backdrop_path, "w500")}
+                    ></Box>
+                  ))}
+              </Row>
+            </AnimatePresence>
+          </TvSlider>
           <Intro>
             All contents:
             <strong>{keyword}</strong>

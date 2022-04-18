@@ -34,6 +34,14 @@ export interface ISearchedMovie {
 export interface ISearchedMovies {
   results: ISearchedMovie[];
 }
+export interface ILatestMovie {
+  backdrop_path: string | null;
+  id: number;
+  original_title: string;
+  overview: string;
+  poster_path: string;
+  title: string;
+}
 // Movies interface
 
 // Tv interface
@@ -99,6 +107,11 @@ export async function getSearchedMovies(keyword: string) {
     await fetch(
       `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${keyword}&include_adult=true`
     )
+  ).json();
+}
+export async function getLatestMovie() {
+  return await (
+    await fetch(`${BASE_URL}/movie/latest?api_key=${API_KEY}`)
   ).json();
 }
 // fetch Movies

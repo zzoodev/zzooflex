@@ -1,4 +1,4 @@
-import { getNowPlayMovies, IGetNowPlayMovies } from "../api";
+import { getLatestMovie, getNowPlayMovies, IGetNowPlayMovies } from "../api";
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { makeImagePath } from "../util";
@@ -37,6 +37,13 @@ const Slider = styled.div`
   position: relative;
   width: 100%;
   height: 200px;
+  margin-bottom: 100px;
+  h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 5px 10px;
+    color: tomato;
+  }
 `;
 const Row = styled(motion.div)`
   display: grid;
@@ -126,16 +133,17 @@ const Overlay = styled(motion.div)`
 
 // Variants
 const RowVariants = {
-  initial: {
-    x: window.outerWidth + 5,
-  },
-  showing: {
+  initial: (isBack: boolean) => ({
+    x: isBack ? -window.outerWidth - 5 : window.outerWidth + 1,
+  }),
+  animate: {
     x: 0,
   },
-  exit: {
-    x: -window.outerWidth - 5,
+  exit: (isBack: boolean) => {
+    return { x: isBack ? window.outerWidth + 5 : -window.outerWidth - 1 };
   },
 };
+
 const boxVariants = {
   normal: {
     scale: 1,
@@ -162,22 +170,40 @@ const infoVariants = {
 };
 
 function Home() {
-  const { data, isLoading } = useQuery<IGetNowPlayMovies>(
+  const { data: nowData, isLoading } = useQuery<IGetNowPlayMovies>(
     ["movie", "nowPlaying"],
     getNowPlayMovies
   );
-  const [index, setIndex] = useState(0);
+  const { data: latestData, isLoading: latestLoading } = useQuery(
+    ["movie", "latest"],
+    getLatestMovie
+  );
+  console.log(latestData);
+  const [nowIndex, setNowIndex] = useState(0);
   const [isSliding, setIsSliding] = useState(false);
+  const [isNowBack, setIsNowBack] = useState(false);
 
-  const increaseIndex = () => {
-    if (data) {
+  const nowNext = () => {
+    if (nowData) {
       if (isSliding) return;
+      setIsNowBack(false);
       toggleSliding();
-      const totalMovie = data?.results.length - 1;
+      const totalMovie = nowData?.results.length - 1;
       const maxIndex = Math.floor(totalMovie / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setNowIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
+  const nowPrev = () => {
+    if (nowData) {
+      if (isSliding) return;
+      setIsNowBack(true);
+      toggleSliding();
+      const totalMovie = nowData?.results.length - 1;
+      const maxIndex = Math.floor(totalMovie / offset) - 1;
+      setNowIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+    }
+  };
+
   const toggleSliding = () => {
     setIsSliding((prev) => !prev);
   };
@@ -188,7 +214,9 @@ function Home() {
 
   const clickedMovie: any =
     infoPageMatch?.params.movieId &&
-    data?.results.find((movie) => movie.id === +infoPageMatch.params.movieId!);
+    nowData?.results.find(
+      (movie) => movie.id === +infoPageMatch.params.movieId!
+    );
 
   return (
     <Wrapper>
@@ -196,24 +224,64 @@ function Home() {
         <LoadingPage>Loading...</LoadingPage>
       ) : (
         <>
-          <Banner bgimg={makeImagePath(data?.results[0].backdrop_path || "")}>
-            <Title>{data?.results[0].title}</Title>
-            <p>{data?.results[0].overview}</p>
+          <Banner
+            bgimg={makeImagePath(nowData?.results[0].backdrop_path || "")}
+          >
+            <Title>{nowData?.results[0].title}</Title>
+            <p>{nowData?.results[0].overview}</p>
           </Banner>
+
+          <Slider>
+            <h2>Now Play</h2>
+            <AnimatePresence initial={false} onExitComplete={toggleSliding}>
+              <Row
+                key={nowIndex}
+                custom={isNowBack}
+                variants={RowVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ type: "tween", duration: 0.7 }}
+              >
+                {nowData?.results
+                  .slice(1)
+                  .slice(nowIndex * offset, nowIndex * offset + offset)
+                  .map((movie) => (
+                    <Box
+                      layoutId={movie.id + ""}
+                      onClick={() => navigate(`../movies/${movie.id}`)}
+                      variants={boxVariants}
+                      initial="nomal"
+                      whileHover="hover"
+                      transition={{ duration: 0.5, type: "tween" }}
+                      key={movie.id}
+                      bgimg={makeImagePath(movie.backdrop_path, "w500")}
+                    >
+                      <Info variants={infoVariants}>
+                        <h4>{movie.title}</h4>
+                      </Info>
+                    </Box>
+                  ))}
+              </Row>
+            </AnimatePresence>
+            <PrevBtn onClick={nowPrev}>Prev</PrevBtn>
+            <NextBtn onClick={nowNext}>Next</NextBtn>
+          </Slider>
 
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleSliding}>
               <Row
-                key={index}
+                key={nowIndex}
+                custom={isNowBack}
                 variants={RowVariants}
                 initial="initial"
-                animate="showing"
+                animate="animate"
                 exit="exit"
                 transition={{ type: "tween", duration: 0.7 }}
               >
-                {data?.results
+                {nowData?.results
                   .slice(1)
-                  .slice(index * offset, index * offset + offset)
+                  .slice(nowIndex * offset, nowIndex * offset + offset)
                   .map((movie) => (
                     <Box
                       layoutId={movie.id + ""}
@@ -233,8 +301,9 @@ function Home() {
               </Row>
             </AnimatePresence>
             <PrevBtn>Prev</PrevBtn>
-            <NextBtn onClick={increaseIndex}>Next</NextBtn>
+            <NextBtn>Next</NextBtn>
           </Slider>
+
           <AnimatePresence>
             {infoPageMatch?.params ? (
               <>
