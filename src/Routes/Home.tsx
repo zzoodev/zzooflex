@@ -20,7 +20,7 @@ const Banner = styled.div<{ bgimg: string }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100vh;
+  height: 90vh;
   padding: 0px 80px;
   background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.9)),
     url(${(props) => props.bgimg});
@@ -36,7 +36,7 @@ const Title = styled.h2`
 const Slider = styled.div`
   position: relative;
   width: 100%;
-  bottom: 100px;
+  height: 200px;
 `;
 const Row = styled(motion.div)`
   display: grid;
@@ -44,6 +44,26 @@ const Row = styled(motion.div)`
   gap: 5px;
   position: absolute;
   width: 100%;
+`;
+const NextBtn = styled(motion.button)`
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+`;
+const PrevBtn = styled(motion.button)`
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 50px;
+  font-size: 18px;
+  font-weight: bold;
 `;
 const Box = styled(motion.div)<{ bgimg: string }>`
   background-image: url(${(props) => props.bgimg});
@@ -176,10 +196,7 @@ function Home() {
         <LoadingPage>Loading...</LoadingPage>
       ) : (
         <>
-          <Banner
-            onClick={increaseIndex}
-            bgimg={makeImagePath(data?.results[0].backdrop_path || "")}
-          >
+          <Banner bgimg={makeImagePath(data?.results[0].backdrop_path || "")}>
             <Title>{data?.results[0].title}</Title>
             <p>{data?.results[0].overview}</p>
           </Banner>
@@ -215,6 +232,8 @@ function Home() {
                   ))}
               </Row>
             </AnimatePresence>
+            <PrevBtn>Prev</PrevBtn>
+            <NextBtn onClick={increaseIndex}>Next</NextBtn>
           </Slider>
           <AnimatePresence>
             {infoPageMatch?.params ? (

@@ -1,9 +1,55 @@
 import { useLocation } from "react-router-dom";
-import { getSearchedMovies, ISearchedMovies } from "../api";
+import { getSearchedMovies, ISearchedMovies, ISearchedMovie } from "../api";
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { makeImagePath } from "../util";
+import { useEffect, useState } from "react";
+import { off } from "process";
+
+const MovieSlider = styled.div`
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-top: 100px;
+  h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+`;
+const TvSlider = styled(MovieSlider)``;
+const Row = styled(motion.div)`
+  position: absolute;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  height: 100%;
+  width: 100%;
+`;
+const Box = styled(motion.div)<{ bgmovie: string }>`
+  height: 100%;
+  background-image: url(${(props) => props.bgmovie});
+  background-position: center;
+  background-size: cover;
+`;
+const NextBtn = styled.button`
+  height: 50px;
+  width: 60px;
+  font-size: 18px;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  z-index: 3;
+`;
+const PrevBtn = styled.button`
+  height: 50px;
+  width: 60px;
+  font-size: 18px;
+  position: absolute;
+  top: 50%;
+  left: 0px;
+  z-index: 3;
+`;
 
 const LoadingPage = styled.div`
   display: flex;
@@ -83,12 +129,45 @@ const infoVariants = {
 
 function Search() {
   const location = useLocation();
-
   let keyword = new URLSearchParams(location.search).get("keyword");
-
   let { data, isLoading } = useQuery<ISearchedMovies>(["movies", keyword], () =>
     getSearchedMovies(keyword as string)
   );
+  const offset = 5;
+  const [movieIndex, setMovieIndex] = useState(0);
+  const [movieIsBack, setMovieIsBack] = useState(false);
+
+  const [tvIndex, setTvIndex] = useState(0);
+  const [tvIsBack, setTvIsBack] = useState(false);
+
+  const onPrevClick = () => {
+    setMovieIsBack(true);
+    const totalMovie = data?.results.filter(
+      (item) => item.media_type === "movie"
+    ).length;
+    const maxMovieIndex = Math.floor(totalMovie! / offset) - 1;
+    setMovieIndex((index) => (index === 0 ? maxMovieIndex : index - 1));
+  };
+  const onNextClick = () => {
+    setMovieIsBack(false);
+    const totalMovie = data?.results.filter(
+      (item) => item.media_type === "movie"
+    ).length;
+    const maxMovieIndex = Math.floor(totalMovie! / offset) - 1;
+    setMovieIndex((index) => (index === maxMovieIndex ? 0 : index + 1));
+  };
+
+  const RowVariants = {
+    initial: (isBack: boolean) => ({
+      x: isBack ? -window.outerWidth - 5 : window.outerWidth + 1,
+    }),
+    animate: {
+      x: 0,
+    },
+    exit: (isBack: boolean) => {
+      return { x: isBack ? window.outerWidth + 5 : -window.outerWidth - 1 };
+    },
+  };
 
   return (
     <Wrap>
@@ -96,8 +175,35 @@ function Search() {
         <LoadingPage></LoadingPage>
       ) : (
         <>
+          <MovieSlider>
+            <h2>Searched Movies</h2>
+            <PrevBtn onClick={onPrevClick}>Prev</PrevBtn>
+            <NextBtn onClick={onNextClick}>Next</NextBtn>
+            <AnimatePresence initial={false}>
+              <Row
+                key={movieIndex}
+                variants={RowVariants}
+                custom={movieIsBack}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ type: "just" }}
+              >
+                {data?.results
+                  .filter((item) => item.media_type === "movie")
+                  ?.slice(movieIndex * offset, movieIndex * offset + offset)
+                  .map((movie) => (
+                    <Box
+                      key={movie.id}
+                      bgmovie={makeImagePath(movie.backdrop_path, "w500")}
+                    ></Box>
+                  ))}
+              </Row>
+            </AnimatePresence>
+          </MovieSlider>
+          <TvSlider></TvSlider>
           <Intro>
-            다음과 관련된 컨텐츠:
+            All contents:
             <strong>{keyword}</strong>
           </Intro>
           <Contents>

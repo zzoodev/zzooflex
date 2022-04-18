@@ -264,9 +264,6 @@ function Tv() {
   const [tvData, setTvData] = useState<ITvData>();
   const { state }: any = useLocation();
 
-  if (state) {
-  }
-
   const onBoxClick = async (id: any) => {
     const data = await (
       await fetch(
