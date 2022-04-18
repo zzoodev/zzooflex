@@ -13,7 +13,7 @@ import styled from "styled-components";
 import { makeImagePath } from "../util";
 import { motion, AnimatePresence, useViewportScroll } from "framer-motion";
 import { useState } from "react";
-import { useNavigate, useMatch } from "react-router-dom";
+import { useNavigate, useMatch, useLocation } from "react-router-dom";
 
 const Wrapper = styled.div`
   height: 200vh;
@@ -33,6 +33,12 @@ const Banner = styled.div<{ bgimg: string }>`
   padding: 0px 80px;
   background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.9)),
     url(${(props) => props.bgimg});
+  h4 {
+    position: absolute;
+    top: 20%;
+    font-size: 28px;
+    font-weight: bold;
+  }
   p {
     width: 50%;
   }
@@ -111,19 +117,21 @@ const InfoPage = styled(motion.div)`
   left: 0;
   right: 0;
   margin: 0 auto;
-  width: 40vw;
-  height: 600px;
+  width: 400px;
+  height: 500px;
   border-radius: 10px;
   border: none;
   overflow: hidden;
-  z-index: 2;
+  z-index: 5;
 `;
-const InfoPageBg = styled.div`
+const InfoPageBg = styled(motion.div)<{ bg: string }>`
   width: 100%;
   height: 50%;
   overflow: hidden;
+  background-image: url(${(props) => props.bg});
   background-size: cover;
   background-position: center center;
+  z-index: 10;
 `;
 const InfoPageInfo = styled.div`
   width: 100%;
@@ -131,6 +139,16 @@ const InfoPageInfo = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${(props) => props.theme.black.lighter};
+  padding: 15px;
+  h5 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  strong {
+    font-size: 18px;
+    color: gold;
+    margin: 10px 0px;
+  }
 `;
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -273,6 +291,8 @@ function Home() {
   const navigate = useNavigate();
   const infoPageMatch = useMatch("/movies/:movieId");
   const { scrollY } = useViewportScroll();
+  const { state }: any = useLocation();
+  console.log(state);
 
   const clickedMovie: any =
     infoPageMatch?.params.movieId &&
@@ -288,10 +308,11 @@ function Home() {
         <>
           <Banner
             bgimg={makeImagePath(
-              latestData?.backdrop_path || latestData?.poster_path || ""
+              latestData?.backdrop_path || latestData?.poster_path || "",
+              "w500"
             )}
           >
-            <h3>Latest Movie</h3>
+            <h4>Latest Movie</h4>
             <Title>{latestData?.title}</Title>
             <p>{latestData?.overview}</p>
           </Banner>
@@ -367,6 +388,7 @@ function Home() {
                             bgimg: movie.backdrop_path,
                             overview: movie.overview,
                             title: movie.title,
+                            star: movie.vote_average,
                           },
                         })
                       }
@@ -417,6 +439,7 @@ function Home() {
                             bgimg: movie.backdrop_path,
                             overview: movie.overview,
                             title: movie.title,
+                            star: movie.vote_average,
                           },
                         })
                       }
@@ -446,16 +469,12 @@ function Home() {
                   style={{ top: scrollY.get() + 100 }}
                 >
                   <InfoPageBg
-                    style={{
-                      backgroundImage: `url(${makeImagePath(
-                        clickedMovie.backdrop_path,
-                        "w500"
-                      )})`,
-                    }}
+                    bg={makeImagePath(state?.bgimg || "", "w500")}
                   ></InfoPageBg>
                   <InfoPageInfo>
-                    <h2>{clickedMovie.title}</h2>
-                    <p>{clickedMovie.overview}</p>
+                    <h5>Title: {state?.title}</h5>
+                    <strong>Rating: {state?.star || "8.5"}</strong>
+                    <p>overview: {state?.overview}</p>
                   </InfoPageInfo>
                 </InfoPage>
                 <Overlay

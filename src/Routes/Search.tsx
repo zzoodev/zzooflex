@@ -13,7 +13,9 @@ const MovieSlider = styled.div`
   height: 200px;
   margin-top: 100px;
   h2 {
-    font-size: 18px;
+    font-size: 24px;
+    font-weight: bold;
+    color: gold;
     margin-bottom: 10px;
   }
 `;
@@ -66,12 +68,13 @@ const Wrap = styled.div`
 const Intro = styled.h2`
   margin-top: 80px;
   color: ${(props) => props.theme.white.darker};
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 200;
   margin-bottom: 10px;
+  color: #2eff51;
   strong {
     font-weight: bold;
-    font-size: 18px;
+    font-size: 28px;
     margin-left: 5px;
   }
 `;
